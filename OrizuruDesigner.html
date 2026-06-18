@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orizuru Origami Lite v1.0 Final Diamond Horizontal</title>
+<style>
+:root{--bg:#f4f6fb;--panel:#fff;--ink:#111827;--muted:#667085;--blue:#0b72c9;--line:#d0d7e2;--red:#c01646}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;color:var(--ink)}
+header{padding:14px 18px;background:linear-gradient(90deg,#063b72,#0b72c9);color:#fff}h1{font-size:18px;margin:0}.sub{font-size:12px;opacity:.9;margin-top:3px}
+main{display:grid;grid-template-columns:390px 1fr;gap:14px;padding:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 6px 18px rgba(16,24,40,.06)}
+label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}input,select{width:100%;font-size:14px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:#fff}input[type="range"]{padding:0;border:0;background:transparent}input[type="color"]{height:42px;padding:3px;border:3px solid var(--picker-color,var(--line));border-radius:10px;cursor:pointer;background:#fff}input[type="color"]::-webkit-color-swatch-wrapper{padding:0}input[type="color"]::-webkit-color-swatch{border:0;border-radius:6px}input[type="color"]::-moz-color-swatch{border:0;border-radius:6px}.sectionTitle{font-size:12px;color:var(--muted);line-height:1.5;font-weight:700;margin-top:4px}.sliderValue{font-size:12px;color:var(--muted);text-align:right;margin-top:-3px}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.btns3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}button{padding:9px 10px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#edf2f7;color:#172033}button.danger{background:#b42318}.hint{font-size:12px;color:var(--muted);line-height:1.5}.checks label{display:flex;align-items:center;gap:8px;font-weight:500}.checks input{width:auto}hr{border:0;border-top:1px solid #e5e7eb;margin:14px 0}
+.stage{display:flex;justify-content:center;align-items:flex-start;overflow:auto}.canvasBox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 6px 18px rgba(16,24,40,.06)}canvas{width:min(82vh,100%);max-width:1000px;aspect-ratio:1/1;border:1px solid #cbd5e1;background:#fff;display:block;touch-action:none}.mini{font-size:11px;color:#667085;margin-top:8px}.list{max-height:110px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fafcff}.item{font-size:12px;padding:5px;border-radius:8px;cursor:pointer}.item.active{background:#dceeff;color:#083b69;font-weight:700}
+select.fontSelect option{font-size:16px;padding:6px 8px}
+@media(max-width:900px){main{grid-template-columns:1fr}canvas{width:100%}}
+</style>
+</head>
+<body>
+<header><h1>Orizuru Origami Lite v1.0 Final Diamond Horizontal</h1><div class="sub">折り鶴用：エリア固定＋Illustrator風オブジェクト配置＋左→右に流れるパス上文字</div></header>
+<main>
+<section class="panel">
+ <div class="hint">左羽・背中・右羽・★はガイド画像から固定座標化。正ひし形の折り紙上に、文字/画像/SVG/PDF素材を配置できます。</div>
+ <label>背景</label><select id="bgMode"><option value="gradient" selected>左右グラデーション</option><option value="solid">単色</option></select>
+ <div class="row"><div><label>左色</label><input id="bgLeft" type="color" value="#8bc6f4"></div><div><label>右色</label><input id="bgRight" type="color" value="#005cb8"></div></div>
+ <label>角度</label><input id="bgAngle" type="range" value="0" min="0" max="360"><div id="bgAngleVal" class="sliderValue">0°</div>
+ <label>開始%</label><input id="bgStart" type="range" value="0" min="0" max="100"><div id="bgStartVal" class="sliderValue">0%</div>
+ <label>終了%</label><input id="bgEnd" type="range" value="100" min="0" max="100"><div id="bgEndVal" class="sliderValue">100%</div>
+ <hr>
+ <div class="sectionTitle">選択中オブジェクト</div>
+ <label>選択中テキスト</label><input id="objText">
+ <label>透明度</label><input id="objOpacity" type="range" min="0" max="100" value="100"><div id="objOpacityVal" class="sliderValue">100%</div>
+ <div class="row"><div><label>文字色</label><input id="objColor" type="color" value="#111111"></div><div><label>カーブ</label><select id="curve"><option value="none">なし</option><option value="rainbow">虹型</option><option value="smile">スマイル</option></select></div></div>
+ <label>フォント</label><select id="objFont" class="fontSelect">
+  <optgroup label="ゴシック・丸ゴシック">
+   <option value='"Noto Sans JP", "Yu Gothic", Meiryo, sans-serif' style='font-family:"Noto Sans JP", "Yu Gothic", Meiryo, sans-serif'>Noto Sans JP</option>
+   <option value='"Yu Gothic", "游ゴシック", Meiryo, sans-serif' style='font-family:"Yu Gothic", "游ゴシック", Meiryo, sans-serif'>游ゴシック</option>
+   <option value='Meiryo, "メイリオ", sans-serif' style='font-family:Meiryo, "メイリオ", sans-serif'>メイリオ</option>
+   <option value='"BIZ UDPGothic", "Yu Gothic", sans-serif' style='font-family:"BIZ UDPGothic", "Yu Gothic", sans-serif'>BIZ UDPゴシック</option>
+   <option value='"MS PGothic", "ＭＳ Ｐゴシック", sans-serif' style='font-family:"MS PGothic", "ＭＳ Ｐゴシック", sans-serif'>MS Pゴシック</option>
+   <option value='"Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif' style='font-family:"Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif'>ヒラギノ角ゴ</option>
+   <option value='"Arial Rounded MT Bold", "Yu Gothic", sans-serif' style='font-family:"Arial Rounded MT Bold", "Yu Gothic", sans-serif'>Rounded Gothic</option>
+  </optgroup>
+  <optgroup label="明朝・クラシック">
+   <option value='"Yu Mincho", "游明朝", "MS PMincho", serif' style='font-family:"Yu Mincho", "游明朝", "MS PMincho", serif'>游明朝</option>
+   <option value='"MS PMincho", "ＭＳ Ｐ明朝", serif' style='font-family:"MS PMincho", "ＭＳ Ｐ明朝", serif'>MS P明朝</option>
+   <option value='"Hiragino Mincho ProN", "Yu Mincho", serif' style='font-family:"Hiragino Mincho ProN", "Yu Mincho", serif'>ヒラギノ明朝</option>
+   <option value='Georgia, "Yu Mincho", serif' style='font-family:Georgia, "Yu Mincho", serif'>Georgia 明朝</option>
+   <option value='"Times New Roman", "Yu Mincho", serif' style='font-family:"Times New Roman", "Yu Mincho", serif'>Times 明朝</option>
+  </optgroup>
+  <optgroup label="手書き・やわらか">
+   <option value='"Segoe Print", "Yu Gothic", cursive' style='font-family:"Segoe Print", "Yu Gothic", cursive'>Segoe Print</option>
+   <option value='"Comic Sans MS", "Yu Gothic", cursive' style='font-family:"Comic Sans MS", "Yu Gothic", cursive'>Comic Sans</option>
+   <option value='"HGSoeiKakupoptai", "Yu Gothic", cursive' style='font-family:"HGSoeiKakupoptai", "Yu Gothic", cursive'>創英角ポップ</option>
+   <option value='"HGMaruGothicMPRO", "Yu Gothic", sans-serif' style='font-family:"HGMaruGothicMPRO", "Yu Gothic", sans-serif'>HG丸ゴシック</option>
+   <option value='"Hannotate SC", "Yu Gothic", cursive' style='font-family:"Hannotate SC", "Yu Gothic", cursive'>手書き風</option>
+  </optgroup>
+  <optgroup label="筆文字・和風">
+   <option value='"Yu Kyokasho", "游教科書体", "Yu Mincho", serif' style='font-family:"Yu Kyokasho", "游教科書体", "Yu Mincho", serif'>游教科書体</option>
+   <option value='"HG行書体", "HGP行書体", "Yu Mincho", serif' style='font-family:"HG行書体", "HGP行書体", "Yu Mincho", serif'>HG行書体</option>
+   <option value='"HGP教科書体", "Yu Kyokasho", serif' style='font-family:"HGP教科書体", "Yu Kyokasho", serif'>HG教科書体</option>
+   <option value='"HGS明朝E", "Yu Mincho", serif' style='font-family:"HGS明朝E", "Yu Mincho", serif'>HGS明朝E</option>
+  </optgroup>
+  <optgroup label="英字・見出し">
+   <option value='Arial, "Yu Gothic", sans-serif' style='font-family:Arial, "Yu Gothic", sans-serif'>Arial</option>
+   <option value='Helvetica, Arial, "Yu Gothic", sans-serif' style='font-family:Helvetica, Arial, "Yu Gothic", sans-serif'>Helvetica</option>
+   <option value='Verdana, "Yu Gothic", sans-serif' style='font-family:Verdana, "Yu Gothic", sans-serif'>Verdana</option>
+   <option value='Tahoma, "Yu Gothic", sans-serif' style='font-family:Tahoma, "Yu Gothic", sans-serif'>Tahoma</option>
+   <option value='Trebuchet MS, "Yu Gothic", sans-serif' style='font-family:Trebuchet MS, "Yu Gothic", sans-serif'>Trebuchet MS</option>
+   <option value='Impact, "Yu Gothic", sans-serif' style='font-family:Impact, "Yu Gothic", sans-serif'>Impact</option>
+   <option value='"Arial Black", "Yu Gothic", sans-serif' style='font-family:"Arial Black", "Yu Gothic", sans-serif'>Arial Black</option>
+   <option value='Courier New, "Yu Gothic", monospace' style='font-family:Courier New, "Yu Gothic", monospace'>Courier New</option>
+   <option value='Garamond, "Yu Mincho", serif' style='font-family:Garamond, "Yu Mincho", serif'>Garamond</option>
+   <option value='Palatino Linotype, "Yu Mincho", serif' style='font-family:Palatino Linotype, "Yu Mincho", serif'>Palatino</option>
+  </optgroup>
+ </select>
+ <label>字間</label><input id="objSpacing" type="range" min="-20" max="80" value="2"><div id="objSpacingVal" class="sliderValue">2</div>
+ <label>曲率 半径</label><input id="objRadius" type="range" min="80" max="900" value="260">
+ <div class="checks">
+  <label><input id="showAreas" type="checkbox" checked> エリア枠を表示</label>
+  <label><input id="showLabels" type="checkbox" checked> エリア名を表示</label>
+  <label><input id="showStar" type="checkbox" checked> ★折り始め位置を表示</label>
+  <label><input id="clipToArea" type="checkbox"> エリア外をクリップ</label>
+ </div>
+ <hr>
+ <div class="row"><div><label>追加エリア</label><select id="areaSel"><option value="leftWing">左羽</option><option value="back" selected>背中</option><option value="rightWing">右羽</option></select></div><div><label>追加文字</label><input id="newText" value="Japan"></div></div>
+ <div class="btns"><button id="addText">文字追加</button><button id="addImage" class="secondary">デザイン素材追加</button></div><input id="imageFile" type="file" accept="image/png,image/jpeg,image/svg+xml,.svg,.png,.jpg,.jpeg,.pdf,application/pdf" style="display:none">
+ <hr>
+ <div class="sectionTitle">レイヤー</div><div id="layerList" class="list"></div>
+ <div class="btns"><button id="layerUp" class="secondary">前面へ</button><button id="layerDown" class="secondary">背面へ</button></div>
+ <div class="btns"><button id="duplicateObj" class="secondary">複製</button><button id="groupObj" class="secondary">グループ化</button></div>
+ <div class="btns"><button id="ungroupObj" class="secondary">グループ解除</button><button id="deleteObj" class="danger">選択削除</button></div>
+ <hr>
+ <div class="sectionTitle">作業の可逆性</div>
+ <div class="btns"><button id="undoBtn" class="secondary">↶ 一つ前に戻る</button><button id="redoBtn" class="secondary">⤵ 元に戻る</button></div>
+ <hr>
+ <div class="btns"><button id="savePng" class="secondary">展開図PNG保存</button><button id="saveJson" class="secondary">JSON保存</button></div>
+ <label>JSON読み込み</label><input id="loadJson" type="file" accept="application/json,.json">
+</section>
+<section class="stage"><div class="canvasBox"><canvas id="cv" width="1000" height="1000"></canvas><div class="mini">操作：クリックで選択／ドラッグで移動／ハンドルで拡大縮小・回転。スマイル・虹型文字は左から右へ流れます</div></div></section>
+</main>
+<script>
+const TEMPLATE={templateId:'orizuru-area-guide-v1-horizontal45-fit-parallel-v2',unit:'normalized1000',foldStartStar:{x:500.0,y:16.0,size:18},areas:[{id:'leftWing',label:'左羽',color:'#c01646',polygon:[[272.83,583.43],[272.83,400.86],[208.0,407.0],[0.57,499.44],[208.0,589.57]],default:{x:190.53,y:496.17,size:46,rot:0}},{id:'back',label:'背中',color:'#c01646',polygon:[[560.88,438.56],[500.0,458.85],[435.74,438.56],[435.18,564.26],[496.06,543.96],[560.32,564.26]],default:{x:498.03,y:501.41,size:46,rot:0}},{id:'rightWing',label:'右羽',color:'#c01646',polygon:[[999.43,499.43],[787.49,403.61],[730.0,407.0],[730.0,588.51],[787.49,585.12]],default:{x:809.7,y:496.85,size:46,rot:0}}]};
+const $=id=>document.getElementById(id), cv=$('cv'), ctx=cv.getContext('2d');
+let objects=[textObj('back','背中'),textObj('rightWing','右羽'),textObj('leftWing','左羽')], selectedId=objects[0].id, action=null;
+let groups=[];
+let undoStack=[];
+let redoStack=[];
+let isApplyingHistory=false;
+let activeEditKey=null;
+function uid(){return (crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()))}
+function area(id){return TEMPLATE.areas.find(a=>a.id===id)}
+function defaultFont(){return '"Noto Sans JP", "Yu Gothic", Meiryo, sans-serif'}
+function fontStack(o){return (o&&o.font)||defaultFont()}
+function textObj(areaId,text){const a=area(areaId),d=a.default;return {id:uid(),type:'text',areaId,text,x:d.x,y:d.y,size:d.size,originalSize:d.size,rotation:d.rot,color:'#111111',font:defaultFont(),curve:'none',radius:260,spacing:2,opacity:100,scaleX:1,scaleY:1}}
+function imageObj(areaId,img,meta={}){const a=area(areaId),d=a.default;return {id:uid(),type:'image',areaId,x:d.x,y:d.y,size:160,originalSize:160,rotation:0,opacity:100,src:meta.src||(img&&img.src)||'',img:img||null,fileName:meta.fileName||'',mimeType:meta.mimeType||'',isSvg:!!meta.isSvg,isPdf:!!meta.isPdf,scaleX:1,scaleY:1}}
+function readFileAsDataURL(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+
+function clonePlainObject(o){
+  const c={...o};
+  delete c.img;
+  return c;
+}
+function captureState(){
+  return {
+    background:{mode:$('bgMode').value,left:$('bgLeft').value,right:$('bgRight').value,angle:+$('bgAngle').value,start:+$('bgStart').value,end:+$('bgEnd').value},
+    view:{showAreas:$('showAreas').checked,showLabels:$('showLabels').checked,showStar:$('showStar').checked,clipToArea:$('clipToArea').checked},
+    objects:objects.map(clonePlainObject),
+    groups:groups.map(g=>({id:g.id,ids:[...g.ids]})),
+    selectedId
+  };
+}
+function stateString(){return JSON.stringify(captureState())}
+function updateHistoryButtons(){
+  const u=$('undoBtn'), r=$('redoBtn');
+  if(u) u.disabled=undoStack.length===0;
+  if(r) r.disabled=redoStack.length===0;
+}
+function pushHistory(){
+  if(isApplyingHistory) return;
+  const snap=stateString();
+  if(undoStack[undoStack.length-1]!==snap){
+    undoStack.push(snap);
+    if(undoStack.length>80) undoStack.shift();
+  }
+  redoStack=[];
+  updateHistoryButtons();
+}
+async function applySnapshot(snap){
+  if(!snap) return;
+  isApplyingHistory=true;
+  const data=JSON.parse(snap);
+  if(data.background){
+    $('bgMode').value=data.background.mode||'gradient';
+    $('bgLeft').value=data.background.left||'#8bc6f4';
+    $('bgRight').value=data.background.right||'#005cb8';
+    $('bgAngle').value=data.background.angle??0;
+    $('bgStart').value=data.background.start??0;
+    $('bgEnd').value=data.background.end??100;
+  }
+  if(data.view){
+    $('showAreas').checked=!!data.view.showAreas;
+    $('showLabels').checked=!!data.view.showLabels;
+    $('showStar').checked=!!data.view.showStar;
+    $('clipToArea').checked=!!data.view.clipToArea;
+  }
+  objects=(data.objects||[]).map(o=>({...o,img:null,font:o.font||defaultFont(),originalSize:o.originalSize||(o.type==='text'?46:160),isPdf:!!o.isPdf,scaleX:o.scaleX??1,scaleY:o.scaleY??1}));
+  await Promise.all(objects.map(attachImage));
+  groups=(data.groups||[]).map(g=>({id:g.id,ids:[...g.ids]}));
+  selectedId=data.selectedId||objects.at(-1)?.id||null;
+  syncBgSliders();
+  syncColorPickers();
+  render();
+  isApplyingHistory=false;
+  updateHistoryButtons();
+}
+async function undo(){
+  if(!undoStack.length) return;
+  redoStack.push(stateString());
+  const prev=undoStack.pop();
+  await applySnapshot(prev);
+}
+async function redo(){
+  if(!redoStack.length) return;
+  undoStack.push(stateString());
+  const next=redoStack.pop();
+  await applySnapshot(next);
+}
+function beginEditableHistory(key){
+  if(isApplyingHistory) return;
+  if(activeEditKey!==key){
+    pushHistory();
+    activeEditKey=key;
+  }
+}
+function endEditableHistory(){activeEditKey=null;updateHistoryButtons()}
+
+let pdfjsLibPromise=null;
+async function getPdfjsLib(){
+  if(!pdfjsLibPromise){
+    pdfjsLibPromise=import('./libs/pdfjs/pdf.min.mjs').then(pdfjs=>{
+      pdfjs.GlobalWorkerOptions.workerSrc='./libs/pdfjs/pdf.worker.min.mjs';
+      return pdfjs;
+    });
+  }
+  return pdfjsLibPromise;
+}
+async function renderPdfFileToImage(file,pageNumber=1){
+  const pdfjs=await getPdfjsLib();
+  const data=new Uint8Array(await file.arrayBuffer());
+  const loadingTask=pdfjs.getDocument({data});
+  const pdf=await loadingTask.promise;
+  const page=await pdf.getPage(Math.min(Math.max(1,pageNumber),pdf.numPages));
+  const base=page.getViewport({scale:1});
+  const maxSide=1800;
+  const scale=Math.min(maxSide/base.width,maxSide/base.height,4);
+  const viewport=page.getViewport({scale});
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.ceil(viewport.width);
+  canvas.height=Math.ceil(viewport.height);
+  const c=canvas.getContext('2d');
+  c.fillStyle='#ffffff';
+  c.fillRect(0,0,canvas.width,canvas.height);
+  await page.render({canvasContext:c,viewport}).promise;
+  return {src:canvas.toDataURL('image/png'),numPages:pdf.numPages,width:canvas.width,height:canvas.height};
+}
+
+function attachImage(o){return new Promise(resolve=>{if(!o||o.type!=='image'||!o.src){resolve(o);return}if(o.isPdf && !String(o.src).startsWith('data:image')){resolve(o);return}const img=new Image();img.onload=()=>{o.img=img;resolve(o)};img.onerror=()=>{o.img=null;resolve(o)};img.src=o.src})}
+async function makeImageObjectFromFile(file,areaId){
+  const isPdf=(file.type==='application/pdf'||/\.pdf$/i.test(file.name));
+  if(isPdf){
+    try{
+      const result=await renderPdfFileToImage(file,1);
+      const img=new Image();
+      return await new Promise(resolve=>{
+        img.onload=()=>resolve(imageObj(areaId,img,{src:result.src,fileName:file.name,mimeType:file.type,isPdf:true,pdfPage:1,pdfPages:result.numPages}));
+        img.onerror=()=>resolve(imageObj(areaId,null,{src:result.src,fileName:file.name,mimeType:file.type,isPdf:true,pdfPage:1,pdfPages:result.numPages}));
+        img.src=result.src;
+      });
+    }catch(err){
+      console.error(err);
+      alert('PDFを表示用画像に変換できませんでした。PDFが破損しているか、ブラウザで処理できない形式の可能性があります。');
+      return null;
+    }
+  }
+  const src=await readFileAsDataURL(file);
+  const img=new Image();
+  return await new Promise(resolve=>{
+    img.onload=()=>resolve(imageObj(areaId,img,{src,fileName:file.name,mimeType:file.type,isSvg:(file.type==='image/svg+xml'||/\.svg$/i.test(file.name))}));
+    img.onerror=()=>{alert('画像を読み込めませんでした。SVGの場合は外部画像参照や未対応形式が含まれていないか確認してください。');resolve(null)};
+    img.src=src;
+  });
+}
+function polyPath(poly,c=ctx){c.beginPath();poly.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath()}
+function centroid(poly){let x=0,y=0;poly.forEach(p=>{x+=p[0];y+=p[1]});return [x/poly.length,y/poly.length]}
+function star(cx,cy,r1,r2){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?r2:r1;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
+function diamondPath(c=ctx){
+  c.beginPath();
+  c.moveTo(500,0);
+  c.lineTo(1000,500);
+  c.lineTo(500,1000);
+  c.lineTo(0,500);
+  c.closePath();
+}
+function bg(){
+  // 背景は用紙そのものとして、正ひし形の中だけに描画する。
+  // 外側は透明のまま残るため、PNG保存時も「ひし形の折り紙」として扱える。
+  ctx.save();
+  diamondPath(ctx);
+  ctx.clip();
+  if($('bgMode').value==='solid'){
+    ctx.fillStyle=$('bgLeft').value;
+    ctx.fillRect(0,0,1000,1000);
+  }else{
+    const deg=(+$('bgAngle').value||0)*Math.PI/180, cx=500, cy=500, len=1500;
+    const x1=cx-Math.cos(deg)*len/2,y1=cy-Math.sin(deg)*len/2,x2=cx+Math.cos(deg)*len/2,y2=cy+Math.sin(deg)*len/2;
+    const g=ctx.createLinearGradient(x1,y1,x2,y2);
+    let s=Math.max(0,Math.min(1,+$('bgStart').value/100)),e=Math.max(0,Math.min(1,+$('bgEnd').value/100));
+    if(e<=s)e=Math.min(1,s+.01);
+    g.addColorStop(0,$('bgLeft').value);g.addColorStop(s,$('bgLeft').value);g.addColorStop(e,$('bgRight').value);g.addColorStop(1,$('bgRight').value);
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,1000,1000);
+  }
+  ctx.restore();
+  // ひし形の用紙外形を薄く表示
+  ctx.save();
+  diamondPath(ctx);
+  ctx.strokeStyle='rgba(15,23,42,.18)';
+  ctx.lineWidth=2;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function syncBgSliders(){$('bgAngleVal').textContent=($('bgAngle').value||0)+'°';$('bgStartVal').textContent=($('bgStart').value||0)+'%';$('bgEndVal').textContent=($('bgEnd').value||0)+'%'}
+function syncColorPickers(){['bgLeft','bgRight','objColor'].forEach(id=>{const el=$(id);if(el)el.style.setProperty('--picker-color',el.value||'#d0d7e2')})}
+function updateFontPreview(o){}
+function initFontOptions(){const sel=$('objFont');if(!sel)return;[...sel.options].forEach(opt=>{opt.style.fontFamily=opt.value});}
+function renderBgChange(){syncBgSliders();syncColorPickers();render()}
+function rawBounds(o){ctx.save();ctx.font=`${o.size}px ${fontStack(o)}`;let w=o.type==='text'?Math.max(70,ctx.measureText(o.text).width+40):o.size,h=o.type==='text'?o.size*1.55:o.size;ctx.restore();return {w,h}}
+function bounds(o){const b=rawBounds(o);return {w:b.w*(o.scaleX??1),h:b.h*(o.scaleY??1)}}
+function drawPdfCard(c,o,x,y,w,h){
+  c.save();
+  c.fillStyle='rgba(255,255,255,.92)';c.strokeStyle='#c01646';c.lineWidth=3;
+  c.beginPath();c.roundRect?c.roundRect(x,y,w,h,10):c.rect(x,y,w,h);c.fill();c.stroke();
+  c.fillStyle='#c01646';c.font=`${Math.max(12,w*.20)}px Arial, sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText('PDF',x+w/2,y+h*.42);
+  c.fillStyle='#334155';c.font=`${Math.max(9,w*.075)}px "Noto Sans JP",sans-serif`;c.fillText((o.fileName||'PDF素材').slice(0,18),x+w/2,y+h*.68);
+  c.restore();
+}
+function renderObj(o){ctx.save();const ar=area(o.areaId);if($('clipToArea').checked&&ar){polyPath(ar.polygon);ctx.clip()}ctx.globalAlpha=(o.opacity??100)/100;ctx.translate(o.x,o.y);ctx.rotate((o.rotation||0)*Math.PI/180);ctx.scale(o.scaleX??1,o.scaleY??1);if(o.type==='image'){const b=rawBounds(o);if(o.img)ctx.drawImage(o.img,-b.w/2,-b.h/2,b.w,b.h);else if(o.isPdf)drawPdfCard(ctx,o,-b.w/2,-b.h/2,b.w,b.h)}else{ctx.fillStyle=o.color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`${o.size}px ${fontStack(o)}`;o.curve==='none'?ctx.fillText(o.text,0,0):drawCurved(o)}ctx.restore();if(o.id===selectedId) drawHandles(o)}
+function drawCurved(o){
+  // Illustratorの「パス上文字」に近い配置。
+  // 文字列を1文字ずつ左から右へ並べ、各文字を円弧の接線方向へ回転する。
+  // rainbow = ∩ / smile = ∪。どちらも読み順は左→右を維持する。
+  const chars=[...o.text];
+  const spacing=+o.spacing||0;
+  const widths=chars.map(ch=>ctx.measureText(ch).width+spacing);
+  const total=Math.max(1,widths.reduce((a,b)=>a+b,0));
+  const radius=Math.max(80,+o.radius||260);
+  const thetaMax=Math.min(Math.PI*0.92,total/(2*radius));
+  let s=-total/2;
+  const cosMax=Math.cos(thetaMax);
+  for(let i=0;i<chars.length;i++){
+    const w=widths[i];
+    s+=w/2;
+    let theta=s/radius;
+    theta=Math.max(-thetaMax,Math.min(thetaMax,theta));
+    const x=radius*Math.sin(theta);
+    const y=(o.curve==='smile')
+      ? radius*Math.cos(theta)-radius*cosMax      // ∪：中央が下がる
+      : -radius*Math.cos(theta)+radius*cosMax;    // ∩：中央が上がる
+    const tangent=(o.curve==='smile') ? -theta : theta;
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(tangent);
+    ctx.fillText(chars[i],0,0);
+    ctx.restore();
+    s+=w/2;
+  }
+}
+function handlePts(o){const b=bounds(o), rad=(o.rotation||0)*Math.PI/180, cos=Math.cos(rad),sin=Math.sin(rad);function tr(x,y){return {x:o.x+x*cos-y*sin,y:o.y+x*sin+y*cos}}return {box:b,corners:[tr(-b.w/2,-b.h/2),tr(b.w/2,-b.h/2),tr(b.w/2,b.h/2),tr(-b.w/2,b.h/2)],scale:tr(b.w/2,b.h/2),scaleX:tr(b.w/2,0),scaleY:tr(0,b.h/2),rotate:tr(b.w/2,-b.h/2-45)}}
+function drawHandles(o){const h=handlePts(o);ctx.save();ctx.strokeStyle='#0b72c9';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.beginPath();h.corners.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#fff';ctx.strokeStyle='#0b72c9';[...h.corners,h.scaleX,h.scaleY,h.rotate].forEach((p,i)=>{ctx.beginPath();ctx.arc(p.x,p.y,i>=6?8:6,0,Math.PI*2);ctx.fill();ctx.stroke()});ctx.beginPath();ctx.moveTo(h.corners[1].x,h.corners[1].y);ctx.lineTo(h.rotate.x,h.rotate.y);ctx.stroke();ctx.fillStyle='#0b72c9';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('横',h.scaleX.x,h.scaleX.y-10);ctx.fillText('縦',h.scaleY.x,h.scaleY.y+18);ctx.restore()}
+
+function render(){ctx.clearRect(0,0,1000,1000);bg();if($('showAreas').checked){TEMPLATE.areas.forEach(a=>{polyPath(a.polygon);ctx.strokeStyle=a.color;ctx.lineWidth=4;ctx.stroke()})}if($('showLabels').checked){ctx.save();ctx.fillStyle='#c01646';ctx.font='44px "Noto Sans JP",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';TEMPLATE.areas.forEach(a=>{const [x,y]=centroid(a.polygon);ctx.fillText(a.label,x,y)});ctx.restore()}if($('showStar').checked){const s=TEMPLATE.foldStartStar;star(s.x,s.y,s.size*.6,s.size*.28);ctx.fillStyle='#ffffff';ctx.fill()}objects.forEach(renderObj);syncPanel();syncLayers()}
+function screenPos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*1000/r.width,y:(e.clientY-r.top)*1000/r.height}}
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+
+function groupOf(id){return groups.find(g=>g.ids.includes(id))||null}
+function groupMembers(id){const g=groupOf(id);return g?objects.filter(o=>g.ids.includes(o.id)):[objects.find(o=>o.id===id)].filter(Boolean)}
+function groupLabel(id){const g=groupOf(id);return g?' [G]':''}
+function localPointer(p,o){const rad=-(o.rotation||0)*Math.PI/180,dx=p.x-o.x,dy=p.y-o.y;return {x:dx*Math.cos(rad)-dy*Math.sin(rad),y:dx*Math.sin(rad)+dy*Math.cos(rad)}}
+function hitObject(p){for(let i=objects.length-1;i>=0;i--){const o=objects[i],h=handlePts(o);if(o.id===selectedId&&dist(p,h.rotate)<14)return {o,kind:'rotate'};if(o.id===selectedId&&dist(p,h.scale)<14)return {o,kind:'scale'};if(o.id===selectedId&&dist(p,h.scaleX)<14)return {o,kind:'scaleX'};if(o.id===selectedId&&dist(p,h.scaleY)<14)return {o,kind:'scaleY'};if(pointInRotBox(p,o,h.box))return {o,kind:'move'}}return null}
+function pointInRotBox(p,o,b){const rad=-(o.rotation||0)*Math.PI/180, dx=p.x-o.x,dy=p.y-o.y, x=dx*Math.cos(rad)-dy*Math.sin(rad), y=dx*Math.sin(rad)+dy*Math.cos(rad);return Math.abs(x)<=b.w/2+12&&Math.abs(y)<=b.h/2+12}
+cv.onpointerdown=e=>{const p=screenPos(e), hit=hitObject(p);if(hit){pushHistory();selectedId=hit.o.id;const o=hit.o;action={kind:hit.kind,start:p,ox:o.x,oy:o.y,os:o.size,or:o.rotation,od:Math.hypot(p.x-o.x,p.y-o.y),oa:Math.atan2(p.y-o.y,p.x-o.x),members:groupMembers(o.id).map(m=>({o:m,ox:m.x,oy:m.y}))};cv.setPointerCapture(e.pointerId)}else selectedId=null;render()};
+cv.onpointermove=e=>{if(!action||!selectedId)return;const p=screenPos(e),o=objects.find(x=>x.id===selectedId);if(action.kind==='move'){const dx=Math.round(p.x-action.start.x),dy=Math.round(p.y-action.start.y);(action.members||[{o,ox:action.ox,oy:action.oy}]).forEach(m=>{m.o.x=m.ox+dx;m.o.y=m.oy+dy})}else if(action.kind==='scale'||action.kind==='scaleX'||action.kind==='scaleY'){const rb=rawBounds(o),lp=localPointer(p,o);if(action.kind==='scale'||action.kind==='scaleX'){o.scaleX=Math.max(.1,Math.min(5,Math.abs(lp.x)/(rb.w/2||1)))}if(action.kind==='scale'||action.kind==='scaleY'){o.scaleY=Math.max(.1,Math.min(5,Math.abs(lp.y)/(rb.h/2||1)))}}else if(action.kind==='rotate'){const a=Math.atan2(p.y-o.y,p.x-o.x);o.rotation=Math.round(action.or+(a-action.oa)*180/Math.PI)}render()};
+cv.onpointerup=e=>{action=null};
+function selected(){return objects.find(o=>o.id===selectedId)}
+function syncPanel(){const o=selected();['objOpacity','objText','objColor','objFont','objSpacing','objRadius','curve'].forEach(id=>$(id).disabled=!o);if(!o){$('objOpacityVal').textContent='';$('objSpacingVal').textContent='';updateFontPreview(null);return;}$('objOpacity').value=o.opacity??100;$('objOpacityVal').textContent=(o.opacity??100)+'%';$('objText').value=o.type==='text'?o.text:'';$('objText').disabled=o.type!=='text';$('objColor').value=o.color||'#111111';$('objColor').disabled=o.type!=='text';$('objFont').value=fontStack(o);$('objFont').disabled=o.type!=='text';updateFontPreview(o);$('objSpacing').value=o.spacing??2;$('objSpacingVal').textContent=o.spacing??2;$('objSpacing').disabled=o.type!=='text';$('objRadius').value=o.radius??260;$('objRadius').disabled=o.type!=='text';$('curve').value=o.curve||'none';$('curve').disabled=o.type!=='text'}
+function syncLayers(){const list=$('layerList');list.innerHTML='';objects.slice().reverse().forEach(o=>{const div=document.createElement('div');div.className='item'+(o.id===selectedId?' active':'');div.textContent=(o.type==='text'?'文字：'+o.text:'画像')+' / '+area(o.areaId).label+groupLabel(o.id);div.onclick=()=>{selectedId=o.id;render()};list.appendChild(div)})}
+function updateSel(){const o=selected();syncColorPickers();if(!o)return;o.opacity=+$('objOpacity').value;$('objOpacityVal').textContent=o.opacity+'%';if(o.type==='text'){o.text=$('objText').value;o.color=$('objColor').value;o.font=$('objFont').value||defaultFont();updateFontPreview(o);o.spacing=+$('objSpacing').value;$('objSpacingVal').textContent=o.spacing;o.radius=+$('objRadius').value;o.curve=$('curve').value}render()}
+['objOpacity','objText','objColor','objFont','objSpacing','objRadius','curve'].forEach(id=>$(id).addEventListener('input',updateSel));
+['bgMode','bgLeft','bgRight','bgAngle','bgStart','bgEnd'].forEach(id=>$(id).addEventListener('input',renderBgChange));
+['showAreas','showLabels','showStar','clipToArea'].forEach(id=>$(id).addEventListener('input',render));
+
+function polygonBounds(poly){let xs=poly.map(p=>p[0]),ys=poly.map(p=>p[1]);return {minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
+function selectedMembers(){return selectedId?groupMembers(selectedId):[]}
+function groupVisualBounds(members){if(!members.length)return null;let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;members.forEach(o=>{const b=bounds(o);minX=Math.min(minX,o.x-b.w/2);maxX=Math.max(maxX,o.x+b.w/2);minY=Math.min(minY,o.y-b.h/2);maxY=Math.max(maxY,o.y+b.h/2)});return {minX,minY,maxX,maxY,w:maxX-minX,h:maxY-minY,cx:(minX+maxX)/2,cy:(minY+maxY)/2}}
+function alignToAreaCenter(){const members=selectedMembers();if(!members.length)return;const ar=area(members[0].areaId);if(!ar)return;const [cx,cy]=centroid(ar.polygon);const gb=groupVisualBounds(members);const dx=cx-gb.cx,dy=cy-gb.cy;members.forEach(o=>{o.x=Math.round(o.x+dx);o.y=Math.round(o.y+dy)});render()}
+function fitSelectedToArea(){const o=selected();if(!o)return;const ar=area(o.areaId);if(!ar)return;const b=polygonBounds(ar.polygon);o.x=Math.round((b.minX+b.maxX)/2);o.y=Math.round((b.minY+b.maxY)/2);if(o.type==='image'){o.size=Math.round(Math.min(b.w,b.h)*0.78)}else{const len=Math.max(1,[...String(o.text||'Text')].length);o.size=Math.round(Math.max(10,Math.min(b.h*.42,b.w/(len*.62))));o.radius=Math.round(Math.max(90,Math.min(b.w,b.h)*1.15))}render()}
+function resetSelectedSize(){const members=selectedMembers();if(!members.length)return;members.forEach(o=>{o.size=o.originalSize||((o.type==='text')?46:160)});render()}
+$('addText').onclick=()=>{pushHistory();const o=textObj($('areaSel').value,$('newText').value||'Text');o.curve=$('curve').value;objects.push(o);selectedId=o.id;render()};
+$('addImage').onclick=()=>$('imageFile').click();$('imageFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;pushHistory();const o=await makeImageObjectFromFile(f,$('areaSel').value);$('imageFile').value='';if(!o)return;objects.push(o);selectedId=o.id;render()};
+function deleteSelectedObject(){
+  if(!selectedId)return;
+  pushHistory();
+  const ids=groupOf(selectedId)?.ids||[selectedId];
+  objects=objects.filter(o=>!ids.includes(o.id));
+  groups=groups.filter(g=>!g.ids.some(id=>ids.includes(id)));
+  selectedId=objects.at(-1)?.id||null;
+  render();
+}
+$('deleteObj').onclick=deleteSelectedObject;
+window.addEventListener('keydown',e=>{
+  const tag=(e.target&&e.target.tagName||'').toLowerCase();
+  const isEditing=tag==='input'||tag==='textarea'||tag==='select'||(e.target&&e.target.isContentEditable);
+  if(isEditing)return;
+  if(e.key==='Delete'||e.key==='Backspace'){
+    if(selectedId){
+      e.preventDefault();
+      deleteSelectedObject();
+    }
+  }
+});
+$('duplicateObj').onclick=()=>{if(!selectedId)return;pushHistory();const members=groupMembers(selectedId);const idMap=new Map();const copies=members.map(o=>{const n={...o,id:uid(),x:o.x+25,y:o.y+25};idMap.set(o.id,n.id);return n});objects.push(...copies);if(members.length>1){groups.push({id:uid(),ids:copies.map(o=>o.id)});}selectedId=copies.at(-1)?.id||null;render()};
+$('layerUp').onclick=()=>{pushHistory();const i=objects.findIndex(o=>o.id===selectedId);if(i>=0&&i<objects.length-1){[objects[i],objects[i+1]]=[objects[i+1],objects[i]];render()}};
+$('layerDown').onclick=()=>{pushHistory();const i=objects.findIndex(o=>o.id===selectedId);if(i>0){[objects[i],objects[i-1]]=[objects[i-1],objects[i]];render()}};
+$('groupObj').onclick=()=>{if(objects.length<2)return;pushHistory();const ar=$('areaSel').value;const targets=objects.filter(o=>o.areaId===ar);if(targets.length<2)return alert('同じ追加エリア内に2つ以上のオブジェクトが必要です。');groups=groups.filter(g=>!g.ids.some(id=>targets.some(o=>o.id===id)));groups.push({id:uid(),ids:targets.map(o=>o.id)});selectedId=targets.at(-1).id;render()};
+$('ungroupObj').onclick=()=>{if(!selectedId)return;pushHistory();groups=groups.filter(g=>!g.ids.includes(selectedId));render()};
+$('savePng').onclick=()=>{const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='orizuru_origami_lite_design.png';a.click()};
+$('saveJson').onclick=()=>{const data={template:TEMPLATE,background:{mode:$('bgMode').value,left:$('bgLeft').value,right:$('bgRight').value,angle:+$('bgAngle').value,start:+$('bgStart').value,end:+$('bgEnd').value},groups,objects:objects.map(o=>{const c={...o};delete c.img;return c})};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='orizuru_origami_lite_project.json';a.click()};
+$('loadJson').onchange=async e=>{const f=e.target.files[0];if(!f)return;pushHistory();const data=JSON.parse(await f.text());if(data.background){$('bgMode').value=data.background.mode||'gradient';$('bgLeft').value=data.background.left||'#8bc6f4';$('bgRight').value=data.background.right||'#005cb8';$('bgAngle').value=data.background.angle??0;$('bgStart').value=data.background.start??0;$('bgEnd').value=data.background.end??100}objects=(data.objects||objects).map(o=>({...o,img:null,font:o.font||defaultFont(),originalSize:o.originalSize||(o.type==='text'?46:160),isPdf:!!o.isPdf,scaleX:o.scaleX??1,scaleY:o.scaleY??1}));await Promise.all(objects.map(attachImage));groups=data.groups||[];selectedId=objects.at(-1)?.id||null;syncBgSliders();render()};
+
+$('undoBtn').onclick=undo;
+$('redoBtn').onclick=redo;
+['objOpacity','objScaleX','objScaleY','objText','objColor','objFont','objSpacing','objRadius','curve','bgMode','bgLeft','bgRight','bgAngle','bgStart','bgEnd','showAreas','showLabels','showStar','clipToArea'].forEach(id=>{
+  const el=$(id);
+  if(!el) return;
+  ['pointerdown','focus'].forEach(ev=>el.addEventListener(ev,()=>beginEditableHistory(id)));
+  ['change','blur','pointerup','keyup'].forEach(ev=>el.addEventListener(ev,endEditableHistory));
+});
+initFontOptions();syncBgSliders();syncColorPickers();updateFontPreview(selected());render();updateHistoryButtons();
+
+</script>
+</body></html>
